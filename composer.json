@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4" : {
-            "Auto\\Loader\\": "src/"
+            "Moto\\Autoload\\": "src/"
         }
     },
     "require-dev": {
@@ -28,7 +28,7 @@
     },
     "autoload-dev": {
         "psr-4" : {
-            "Auto\\Loader\\": "tests/"
+            "Moto\\Autoload\\": "tests/"
         }
     },
     "scripts": {
