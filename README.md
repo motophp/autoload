@@ -116,6 +116,8 @@ Cf. the [reference implementation](./src/Resolver.php) `resolutionAlgotrithm()` 
 
 - Base file names with underscores WILL NOT be resolvable.
 
+- PSR-4 mapped classes *without underscores* are Moto-compatible.
+
 - The `partial-name` itself does not have to exist at the `absolute-file-path`; that is, the file might contain only underscore-suffixed names:
 
     ```php
