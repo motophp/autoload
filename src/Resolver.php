@@ -3,48 +3,71 @@ declare(strict_types=1);
 
 namespace Moto\Autoload;
 
+use RuntimeException;
+
 /**
- * @phpstan-type namespace_directory_array array<non-empty-string, non-empty-string>
+ * @phpstan-type namespace_prefix_string string
+ *
+ * @phpstan-type directory_prefix_string string
+ *
+ * @phpstan-type namespace_directories_array array<
+ *     namespace_prefix_string,
+ *     directory_prefix_string[]
+ * >
  */
 class Resolver
 {
     /**
-     * @var namespace_directory_array $namespaceDirectory
+     * @var namespace_directories_array $namespaceDirectories
      */
-    protected array $namespaceDirectory;
+    protected array $namespaceDirectories = [];
+
+    protected string $filenameSuffix = '.php';
 
     /**
-     * @param namespace_directory_array $namespaceDirectory
+     * @param namespace_prefix_string $namespace
+     * @param directory_prefix_string $directory
      */
-    public function __construct(
-        array $namespaceDirectory,
-        protected string $filenameSuffix = '.php'
-    ) {
-        foreach ($namespaceDirectory as $namespace => $directory) {
-            $namespace = rtrim($namespace, '\\') . '\\';
-            $directory = DIRECTORY_SEPARATOR . ltrim($directory, DIRECTORY_SEPARATOR);
-            $directory = rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-            $this->namespaceDirectory[$namespace] = $directory;
+    public function add(string $namespace, string $directory) : void
+    {
+        $namespace = trim($namespace);
+
+        if ($namespace !== '' && ! str_ends_with($namespace, '\\')) {
+            throw new RuntimeException("Expected namespace prefix ending with a namespace separator, or an empty string; got '$namespace'.");
         }
+
+        $osSpecificDirectory = str_replace('/', DIRECTORY_SEPARATOR, $directory);
+
+        if (! str_ends_with($osSpecificDirectory, DIRECTORY_SEPARATOR)) {
+            throw new RuntimeException("Expected directory prefix ending with with a directory separator; got '$directory'.");
+        }
+
+        $this->namespaceDirectories[$namespace][] = $osSpecificDirectory;
     }
 
     public function resolve(string $fullyQualifiedName) : ?string
     {
-        foreach ($this->namespaceDirectory as $namespace => $directory) {
-            $absoluteFilePath = $this->resolutionAlgorithm(
-                $namespace,
-                $directory,
-                $fullyQualifiedName
-            );
+        foreach ($this->namespaceDirectories as $namespace => $directories) {
+            foreach ($directories as $directory) {
+                $absoluteFilePath = $this->resolutionAlgorithm(
+                    $namespace,
+                    $directory,
+                    $fullyQualifiedName
+                );
 
-            if ($absoluteFilePath) {
-                return $absoluteFilePath;
+                if ($absoluteFilePath) {
+                    return $absoluteFilePath;
+                }
             }
         }
 
         return null;
     }
 
+    /**
+     * @param namespace_prefix_string $namespacePrefix
+     * @param directory_prefix_string $directoryPrefix
+     */
     protected function resolutionAlgorithm(
         string $namespacePrefix,
         string $directoryPrefix,

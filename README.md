@@ -82,7 +82,7 @@ class Dib_Irk { }
 
 Given ...
 
-- a fully qualified `namespace-prefix` (including the rightmost namespace separator), and
+- a `namespace-prefix` of a non-empty namespace (including the rightmost namespace separator) or an empty string (indicating the global namespace), and
 
 - an absolute `directory-prefix` for the `namespace-prefix` (including the rightmost directory separator)
 

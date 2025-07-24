@@ -15,9 +15,12 @@ class ResolverTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->resolver = new Resolver([
-            'Moto\\Autoload\\' => __DIR__ . DIRECTORY_SEPARATOR,
-        ]);
+        $this->resolver = new Resolver();
+
+        $this->resolver->add(
+            'Moto\\Autoload\\',
+            __DIR__ . DIRECTORY_SEPARATOR,
+        );
     }
 
     public function testResolve_toString() : void
@@ -29,16 +32,16 @@ class ResolverTest extends TestCase
             . 'Dib.php';
 
         $actual = $this->resolver->resolve('Moto\\Autoload\\Fake\\Foo_Bar\\Baz\\Dib');
-        $this->assertEquals($expect, $actual);
+        $this->assertSame($expect, $actual);
 
         $actual = $this->resolver->resolve('Moto\\Autoload\\Fake\\Foo_Bar\\Baz\Dib_Zim');
-        $this->assertEquals($expect, $actual);
+        $this->assertSame($expect, $actual);
 
         $actual = $this->resolver->resolve('Moto\\Autoload\\Fake\\Foo_Bar\\Baz\\Dib_Gir');
-        $this->assertEquals($expect, $actual);
+        $this->assertSame($expect, $actual);
 
         $actual = $this->resolver->resolve('Moto\\Autoload\\Fake\\Foo_Bar\\Baz\\Dib_Irk');
-        $this->assertEquals($expect, $actual);
+        $this->assertSame($expect, $actual);
     }
 
     public function testResolve_toNull() : void
