@@ -108,7 +108,7 @@ Given ...
 
 8. If the `absolute-file-path` exists, the `fully-qualified-name` resolves to the `absolute-file-path`; otherwise, it resolves to `null`.
 
-Cf. the [reference implementation](./src/Resolver.php) `resolutionAlgotrithm()` method for an example.
+Cf. the [reference implementation](./src/Loader.php) `resolutionAlgotrithm()` method for an example.
 
 ## Implications
 
